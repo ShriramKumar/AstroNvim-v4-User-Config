@@ -17,4 +17,4 @@
 --   },
 -- }
 vim.opt.colorcolumn = "80"
-vim.keymap.set("i", "jk" "<Esc")
+vim.keymap.set("i", "jk", "<Esc>")
