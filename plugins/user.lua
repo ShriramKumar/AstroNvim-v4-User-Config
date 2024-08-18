@@ -6,6 +6,19 @@
 ---@type LazySpec
 return {
   {
+    "OXY2DEV/markview.nvim",
+    lazy = false, -- Recommended
+    -- ft = "markdown" -- If you decide to lazy-load anyway
+    dependencies = {
+      -- You will not need this if you installed the
+      -- parsers manually
+      -- Or if the parsers are in your $RUNTIMEPATH
+      "nvim-treesitter/nvim-treesitter",
+
+      "nvim-tree/nvim-web-devicons",
+    },
+  },
+  {
     "stevearc/conform.nvim",
     lazy = false,
     config = function()
@@ -13,10 +26,11 @@ return {
         formatters_by_ft = {
           lua = { "stylua" },
           go = { "goimports", "gofumpt" },
+          md = { "markdownfmt" },
         },
         default_format_opts = {
           lsp_format = "never",
-        }
+        },
       }
     end,
   },
