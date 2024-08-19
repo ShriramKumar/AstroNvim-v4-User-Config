@@ -42,12 +42,7 @@ return {
     -- Mappings can be configured through AstroCore as well.
     -- NOTE: keycodes follow the casing in the vimdocs. For example, `<Leader>` must be capitalized
     mappings = {
-      v = {
-        ["<leader>gy"] = {
-          function() require("gitlinker").get_buf_range_url "v" end,
-          desc = "copy github range",
-        },
-      },
+      v = {},
       -- first key is the mode
       n = {
         -- second key is the lefthand side of the map
@@ -72,31 +67,6 @@ return {
 
         -- setting a mapping to false will disable it
         -- ["<C-S>"] = false,
-        ["<Leader>w"] = { desc = "preView" },
-        ["<Leader>vd"] = {
-          function() require("goto-preview").goto_preview_definition {} end,
-          desc = "preview definition",
-        },
-        ["<Leader>vt"] = {
-          function() require("goto-preview").goto_preview_type_definition {} end,
-          desc = "preview type definition",
-        },
-        ["<Leader>vi"] = {
-          function() require("goto-preview").goto_preview_implementation {} end,
-          desc = "preview implementation",
-        },
-        ["<Leader>vc"] = {
-          function() require("goto-preview").close_all_win() end,
-          desc = "close all previews",
-        },
-        ["<Leader>vr"] = {
-          function() require("goto-preview").goto_preview_references() end,
-          desc = "preview references",
-        },
-        ["<Leader>gy"] = {
-          function() require("gitlinker").get_buf_range_url "n" end,
-          desc = "copy github location link",
-        },
       },
     },
   },
