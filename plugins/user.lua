@@ -5,6 +5,8 @@
 
 ---@type LazySpec
 return {
+        {	"nvim-tree/nvim-web-devicons.nvim", lazy = false	},
+	{	"ggandor/lightspeed.nvim", lazy = false	},
 	{
 		"OXY2DEV/markview.nvim",
 		lazy = false, -- Recommended
@@ -63,6 +65,7 @@ return {
 					end,
 			      	},
 			}, neotest_ns)
+			require('dap-go').setup()
 			require("neotest").setup({
 				adapters = {
 					require("neotest-go")({
@@ -338,7 +341,7 @@ return {
 			})
 		end,
 	},
-	{ "justinmk/vim-sneak", lazy = false },
+	--{ "justinmk/vim-sneak", lazy = false },
 	{ "google/vim-jsonnet", lazy = false },
 
 	-- == Examples of Adding Plugins ==
