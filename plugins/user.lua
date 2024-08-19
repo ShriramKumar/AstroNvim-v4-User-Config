@@ -45,19 +45,40 @@ return {
 					"leoluz/nvim-dap-go",
 				},
 			},
+			{
+				"nvim-neotest/neotest-go",
+				dependencies = {
+					"leoluz/nvim-dap-go",
+				},
+			},
 		},
 		config = function()
+			local neotest_ns = vim.api.nvim_create_namespace("neotest")
+			vim.diagnostic.config({
+				virtual_text = {
+					format = function(diagnostic)
+				  		local message =
+				    			diagnostic.message:gsub("\n", " "):gsub("\t", " "):gsub("%s+", " "):gsub("^%s+", "")
+				  		return message
+					end,
+			      	},
+			}, neotest_ns)
 			require("neotest").setup({
 				adapters = {
-					require("neotest-golang")({ -- Specify configuration
-						go_test_args = {
-							"-v",
-							"-race",
-							"-count=1",
-							"-parallel=1",
-							"-coverprofile=" .. vim.fn.getcwd() .. "/coverage.out",
-						},
-					}), -- Registration
+					require("neotest-go")({
+					      experimental = {
+						test_table = true,
+					      },
+					}),
+					--require("neotest-golang")({ -- Specify configuration
+					--	go_test_args = {
+					--		"-v",
+					--		"-race",
+					--		"-count=1",
+					--		"-parallel=1",
+					--		"-coverprofile=" .. vim.fn.getcwd() .. "/coverage.out",
+					--	},
+					--}), -- Registration
 				},
 				discovery = {
 					-- Drastically improve performance in ginormous projects by
@@ -78,8 +99,13 @@ return {
 					expand_errors = true,
 				},
 				output = {
-					enable = true,
+					enabled = true,
 					open_on_run = "short",
+				},
+				status = {
+					enabled = true,
+					signs = true,
+					virtual_text = true,
 				},
 			})
 		end,

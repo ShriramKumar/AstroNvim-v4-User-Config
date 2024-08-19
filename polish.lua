@@ -16,5 +16,4 @@
 --     ["~/%.config/foo/.*"] = "fooscript",
 --   },
 -- }
-vim.opt.colorcolumn = "80"
 vim.keymap.set("i", "jk", "<Esc>")
