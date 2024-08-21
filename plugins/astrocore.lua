@@ -5,6 +5,17 @@
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
 --       as this provides autocomplete and documentation while editing
 
+-- function for calculating the current session name
+local get_session_name = function()
+  local name = vim.fn.getcwd()
+  local branch = vim.fn.system("git branch --show-current")
+  if vim.v.shell_error == 0 then
+    return name .. vim.trim(branch --[[@as string]])
+  else
+    return name
+  end
+end
+
 ---@type LazySpec
 return {
   "AstroNvim/astrocore",
@@ -24,6 +35,10 @@ return {
       virtual_text = true,
       underline = true,
     },
+    sessions = {
+      -- disable the auto-saving of directory sessions
+      autosave = { cwd = false },
+    },
     -- vim options can be configured here
     options = {
       opt = { -- vim.opt.<key>
@@ -32,12 +47,47 @@ return {
         spell = false, -- sets vim.opt.spell
         signcolumn = "yes", -- sets vim.opt.signcolumn to yes
         wrap = false, -- sets vim.opt.wrap
-	colorcolumn = "80", --sets vim.opt.colorcolumn
+      	colorcolumn = "80", --sets vim.opt.colorcolumn
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
         -- NOTE: `mapleader` and `maplocalleader` must be set in the AstroNvim opts or before `lazy.setup`
         -- This can be found in the `lua/lazy_setup.lua` file
+      },
+    },
+    autocmds = {
+      -- disable alpha autostart
+      alpha_autostart = false,
+      git_branch_sessions = {
+        -- auto save directory sessions on leaving
+        {
+          event = "VimLeavePre",
+          desc = "Save git branch directory sessions on close",
+          callback = vim.schedule_wrap(function()
+            if require("astrocore.buffer").is_valid_session() then
+              require("resession").save(
+                get_session_name(),
+                { dir = "dirsession", notify = false }
+              )
+            end
+          end),
+        },
+        -- auto restore previous previous directory session, remove if necessary
+        {
+          event = "VimEnter",
+          desc = "Restore previous directory session if neovim opened with no arguments",
+          nested = true, -- trigger other autocommands as buffers open
+          callback = function()
+            -- Only load the session if nvim was started with no args
+            if vim.fn.argc(-1) == 0 then
+              -- try to load a directory session using the current working directory
+              require("resession").load(
+                get_session_name(),
+                { dir = "dirsession", silence_errors = true }
+              )
+            end
+          end,
+        },
       },
     },
     -- Mappings can be configured through AstroCore as well.
@@ -60,6 +110,27 @@ return {
             )
           end,
           desc = "Close buffer from tabline",
+        },
+
+	-- git branch specific session management
+        ["<Leader>SS"] = {
+          function()
+            require("resession").save(
+              get_session_name(),
+              { dir = "dirsession" }
+            )
+          end,
+          desc = "Save current git branch session",
+        },
+        -- update load dirsession mapping to get the correct session name
+        ["<Leader>S."] = {
+          function()
+            require("resession").load(
+              get_session_name(),
+              { dir = "dirsession" }
+            )
+          end,
+          desc = "Load current git branch session",
         },
 
         -- tables with just a `desc` key will be registered with which-key if it's installed

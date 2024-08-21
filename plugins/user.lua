@@ -5,7 +5,7 @@
 
 ---@type LazySpec
 return {
-        {	"nvim-tree/nvim-web-devicons.nvim", lazy = false	},
+        {	"nvim-tree/nvim-web-devicons", lazy = false	},
 	{	"ggandor/lightspeed.nvim", lazy = false	},
 	{
 		"OXY2DEV/markview.nvim",
@@ -213,16 +213,7 @@ return {
 		"ShriramKumar/lsp-format-modifications.nvim",
 		lazy = false,
 	},
-	{
-		"olimorris/persisted.nvim",
-		lazy = false,
-		config = function()
-			require("persisted").setup({
-				use_git_branch = true,
-			})
-		end,
-	},
-	{
+        {	
 		"rmagatti/goto-preview",
 		lazy = false,
 		config = function()
@@ -380,7 +371,7 @@ return {
 	},
 
 	-- You can disable default plugins as follows:
-	{ "max397574/better-escape.nvim", enabled = false },
+	{ "max397574/better-escape.nvim", enabled = true },
 
 	-- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
 	{
