@@ -5,7 +5,8 @@
 
 ---@type LazySpec
 return {
-        {	"nvim-tree/nvim-web-devicons", lazy = false	},
+
+	{	"nvim-tree/nvim-web-devicons", lazy = false	},
 	{	"ggandor/lightspeed.nvim", lazy = false	},
 	{
 		"OXY2DEV/markview.nvim",
@@ -15,24 +16,45 @@ return {
 			-- You will not need this if you installed the
 			-- parsers manually
 			-- Or if the parsers are in your $RUNTIMEPATH
-			"nvim-treesitter/nvim-treesitter",
+			"nvikm-treesitter/nvim-treesitter",
 
 			"nvim-tree/nvim-web-devicons",
 		},
 	},
+
+{
+  "andythigpen/nvim-coverage",
+  requires = "nvim-lua/plenary.nvim",
+  config = function()
+    require("coverage").setup()
+  end,
+},
+	-- {
+	-- 	"rcarriga/nvim-dap-ui",
+	-- 	dependencies = {
+	-- 		"nvim-neotest/nvim-nio",
+	-- 		"mfussenegger/nvim-dap",
+	-- 	},
+	-- },
+	-- {
+	-- 	"andythigpen/nvim-coverage",
+	-- 	requires = "nvim-lua/plenary.nvim",
+	-- 	config = function()
+	-- 		require("coverage").setup()
+	-- 	end,
+	-- },
 	{
-		"rcarriga/nvim-dap-ui",
+		'stevearc/aerial.nvim',
+		opts = {},
+		-- Optional dependencies
 		dependencies = {
-			"nvim-neotest/nvim-nio",
-			"mfussenegger/nvim-dap",
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-tree/nvim-web-devicons"
 		},
-	},
-	{
-		"andythigpen/nvim-coverage",
-		requires = "nvim-lua/plenary.nvim",
-		config = function()
-			require("coverage").setup()
-		end,
+		config = function() require("aerial").setup() end,
+		keys = {
+			{"<leader>a", "<cmd>AerialToggle!<CR>", desc="[a]erial code overview"},
+		},
 	},
 	{
 		"nvim-neotest/neotest",
@@ -46,42 +68,33 @@ return {
 				dependencies = {
 					"leoluz/nvim-dap-go",
 				},
+				version = "*",
 			},
-			{
-				"nvim-neotest/neotest-go",
-				dependencies = {
-					"leoluz/nvim-dap-go",
-				},
-			},
+			-- {
+			-- 	"nvim-neotest/neotest-go",
+			-- 	dependencies = {
+			-- 		"leoluz/nvim-dap-go",
+			-- 	},
+			-- },
 		},
 		config = function()
-			local neotest_ns = vim.api.nvim_create_namespace("neotest")
-			vim.diagnostic.config({
-				virtual_text = {
-					format = function(diagnostic)
-				  		local message =
-				    			diagnostic.message:gsub("\n", " "):gsub("\t", " "):gsub("%s+", " "):gsub("^%s+", "")
-				  		return message
-					end,
-			      	},
-			}, neotest_ns)
-			require('dap-go').setup()
+			--require('dap-go').setup()
 			require("neotest").setup({
 				adapters = {
-					require("neotest-go")({
-					      experimental = {
-						test_table = true,
-					      },
-					}),
-					--require("neotest-golang")({ -- Specify configuration
-					--	go_test_args = {
-					--		"-v",
-					--		"-race",
-					--		"-count=1",
-					--		"-parallel=1",
-					--		"-coverprofile=" .. vim.fn.getcwd() .. "/coverage.out",
-					--	},
-					--}), -- Registration
+					-- require("neotest-go")({
+					-- 	experimental = {
+					-- 		test_table = true,
+					-- 	},
+					-- }),
+					require("neotest-golang")({
+					 -- Specify configuration
+					 	testify_enabled = false,
+						go_test_args = {
+							"-count=1",
+							"-parallel=1",
+							"-coverprofile=" .. vim.fn.getcwd() .. "/coverage.out",
+						},
+					}), -- Registration
 				},
 				discovery = {
 					-- Drastically improve performance in ginormous projects by
@@ -94,11 +107,11 @@ return {
 				},
 				running = {
 					-- Run tests concurrently when an adapter provides multiple commands to run.
-					concurrent = true,
+					concurrent = false,
 				},
 				summary = {
 					-- Enable/disable animation of icons.
-					animated = true,
+					animated = false,
 					expand_errors = true,
 				},
 				output = {
@@ -106,7 +119,7 @@ return {
 					open_on_run = "short",
 				},
 				status = {
-					enabled = true,
+					enabled = false,
 					signs = true,
 					virtual_text = true,
 				},
@@ -200,7 +213,7 @@ return {
 			require("conform").setup({
 				formatters_by_ft = {
 					lua = { "stylua" },
-					go = { "goimports", "gofumpt" },
+					go = { "gofmt"},
 					md = { "markdownfmt" },
 				},
 				default_format_opts = {
@@ -213,7 +226,7 @@ return {
 		"ShriramKumar/lsp-format-modifications.nvim",
 		lazy = false,
 	},
-        {	
+	{	
 		"rmagatti/goto-preview",
 		lazy = false,
 		config = function()
@@ -393,24 +406,24 @@ return {
 			local Rule = require("nvim-autopairs.rule")
 			local cond = require("nvim-autopairs.conds")
 			npairs.add_rules(
-				{
-					Rule("$", "$", { "tex", "latex" })
+			{
+				Rule("$", "$", { "tex", "latex" })
 						-- don't add a pair if the next character is %
 						:with_pair(cond.not_after_regex("%%"))
 						-- don't add a pair if  the previous character is xxx
 						:with_pair(
 							cond.not_before_regex("xxx", 3)
-						)
+							)
 						-- don't move right when repeat character
 						:with_move(cond.none())
 						-- don't delete if the next character is xx
 						:with_del(cond.not_after_regex("xx"))
 						-- disable adding a newline when you press <cr>
 						:with_cr(cond.none()),
-				},
+					},
 				-- disable for .vim files, but it work for another filetypes
 				Rule("a", "a", "-vim")
-			)
+				)
 		end,
 	},
 }
